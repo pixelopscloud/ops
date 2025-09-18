@@ -1,0 +1,43 @@
+pipeline {
+    agent any  // Runs on any available agent/node
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out code from GitHub...'
+                checkout scm  // Automatically checks out your repo
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Building the project...'
+                // Add your build commands here, e.g., 'mvn clean compile' for Java, or 'npm install' for Node.js
+                // For now, just echo to test
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+                // Add test commands, e.g., 'mvn test'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying...'
+                // Add deploy commands, e.g., to Docker or a server
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline finished!'
+        }
+        success {
+            echo 'Build succeeded!'
+        }
+        failure {
+            echo 'Build failed!'
+        }
+    }
+}
