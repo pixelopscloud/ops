@@ -1,0 +1,15 @@
+{
+  "name": "pipeline-demo",
+  "version": "1.0.0",
+  "main": "app/index.js",
+  "scripts": {
+    "start": "node app/index.js",
+    "test": "mocha test/test.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "mocha": "^10.2.0"
+  }
+}
