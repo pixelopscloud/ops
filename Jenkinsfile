@@ -68,29 +68,40 @@ pipeline {
             steps {
                 echo '✅ Verifying deployment...'
                 script {
-                    sleep(time: 10, unit: 'SECONDS')
+                    sleep(time: 15, unit: 'SECONDS')
                     sh """
                         # Check if container is running
                         docker ps | grep ${CONTAINER_NAME} || exit 1
                         
-                        # Check container logs for startup message
+                        # Check container logs
                         docker logs ${CONTAINER_NAME} 2>&1 | grep "Server is running" || exit 1
                         
-                        # Test using node to make HTTP request
+                        # Test health endpoint using IPv4
                         docker exec ${CONTAINER_NAME} node -e "
                             const http = require('http');
-                            http.get('http://localhost:3000/health', (res) => {
+                            const options = {
+                                hostname: '127.0.0.1',
+                                port: 3000,
+                                path: '/health',
+                                method: 'GET'
+                            };
+                            
+                            const req = http.request(options, (res) => {
                                 if (res.statusCode === 200) {
-                                    console.log('Health check passed!');
+                                    console.log('✅ Health check passed!');
                                     process.exit(0);
                                 } else {
-                                    console.log('Health check failed with status:', res.statusCode);
+                                    console.log('❌ Health check failed:', res.statusCode);
                                     process.exit(1);
                                 }
-                            }).on('error', (err) => {
-                                console.error('Error:', err.message);
+                            });
+                            
+                            req.on('error', (err) => {
+                                console.error('❌ Error:', err.message);
                                 process.exit(1);
                             });
+                            
+                            req.end();
                         " || exit 1
                         
                         echo "✅ Application is running successfully!"
@@ -115,8 +126,9 @@ pipeline {
     post {
         success {
             echo '✅ =========================================='
-            echo '✅ Pipeline completed successfully!'
-            echo "🌐 Application URL: http://localhost:${APP_PORT}"
+            echo '✅ PIPELINE SUCCESSFUL!'
+            echo "🌐 Application: http://localhost:${APP_PORT}"
+            echo "❤️  Health: http://localhost:${APP_PORT}/health"
             echo '✅ =========================================='
         }
         failure {
