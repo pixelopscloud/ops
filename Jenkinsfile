@@ -74,46 +74,4 @@ pipeline {
                         docker ps | grep ${CONTAINER_NAME} || exit 1
                         
                         # Check container logs for startup message
-                        docker logs ${CONTAINER_NAME} 2>&1 | grep "Server is running" || exit 1
-                        
-                        # Test using container's internal network
-                        docker exec ${CONTAINER_NAME} wget -q -O- http://localhost:3000/health || exit 1
-                        
-                        echo "✅ Application is running successfully!"
-                        echo "🌐 Access at: http://localhost:${APP_PORT}"
-                    """
-                }
-            }
-        }
-        
-        stage('Cleanup Old Images') {
-            steps {
-                echo '🧹 Cleaning up old Docker images...'
-                script {
-                    sh """
-                        docker image prune -f || true
-                    """
-                }
-            }
-        }
-    }
-    
-    post {
-        success {
-            echo '✅ =========================================='
-            echo '✅ Pipeline completed successfully!'
-            echo "🌐 Application URL: http://localhost:${APP_PORT}"
-            echo '✅ =========================================='
-        }
-        failure {
-            echo '❌ Pipeline failed!'
-            script {
-                sh "docker logs ${CONTAINER_NAME} || true"
-            }
-        }
-        always {
-            echo '📊 Pipeline execution completed'
-            sh "docker ps -a | grep ${CONTAINER_NAME} || true"
-        }
-    }
-}
+                        docker logs ${CONTAINER_NAME} 2>&1 | grep "Server is
