@@ -9,7 +9,7 @@ app.use(express.json());
 // Routes
 app.get('/', (req, res) => {
   res.json({
-    message: 'Welcome to Simple Node.js App!',
+    message: 'Welcome to Simple Node.js App - Version 2.0 Updated!',
     status: 'Running',
     version: '1.0.0',
     timestamp: new Date().toISOString()
